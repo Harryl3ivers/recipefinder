@@ -1,14 +1,18 @@
 from api_client import SpoonacularClient
+from validate_ingredients import validate_ingredients
 
 def main():
     print("🍳 Recipe Finder\n")
     
     ingredients = input("Enter ingredients you have (comma-separated): ")
-    ingredients_list = [ingredient.strip() for ingredient in ingredients.split(",")]
+    ingredients_list = validate_ingredients(ingredients)
+    mealType = input("Enter meal type (optional, e.g. breakfast, lunch, dinner): ") or None
+
+
     
     try:
         client = SpoonacularClient()
-        recipes = client.search_recipes(query="", ingredients=",".join(ingredients_list), number=5)
+        recipes = client.search_recipes(query="", ingredients=",".join(ingredients_list), meal_type= mealType, number=5)
         
         if not recipes:
             print("❌ No recipes found with the given ingredients.")
@@ -22,11 +26,11 @@ def main():
                 print(f"   🔗 {recipe['sourceUrl']}")
                 
                 # Check and display instructions
-                if recipe.get("instructions") and len(recipe["instructions"]) > 0:
-                    steps = recipe["instructions"][0].get("steps", [])
+                if recipe.get("instructions") and len(recipe["instructions"]) > 0:  #does instructions exist and is it not None and does list have 1 item
+                    steps = recipe["instructions"][0].get("steps", []) #get steps from first instruction block and get steps
                     if steps:
                         print(f"   📝 Instructions:")
-                        for step in steps:
+                        for step in steps:  #loop through steps
                             print(f"      Step {step['number']}: {step['step']}")
                 else:
                     print(f"   📝 No instructions available")

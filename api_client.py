@@ -12,7 +12,7 @@ class SpoonacularClient:
         if not self.api_key:
             raise ValueError("API_KEY not found in environment variables.")
 
-    def search_recipes(self, query, ingredients, number=10):
+    def search_recipes(self, query, ingredients, meal_type = None, number=10):
         url = f"{self.BASE_URL}/recipes/complexSearch"
         params = {
             "q": query,
@@ -20,8 +20,11 @@ class SpoonacularClient:
             "apiKey": self.api_key,
             "number": number,
             "ignorePantry": True,
-            "ranking": 2,
+            "ranking": 2
+           
         }
+        if meal_type:
+            params["type"] = meal_type
         requests_response = requests.get(url, params=params)
         requests_response.raise_for_status()
         data = requests_response.json()
@@ -51,6 +54,7 @@ class SpoonacularClient:
                 "cuisine": data.get("cuisines"),
                 "image": data.get("image"),
                 "sourceUrl": data.get("sourceUrl"),
+                "mealType": data.get("type"),
             }
             
                  
