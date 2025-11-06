@@ -1,5 +1,6 @@
 from api_client import SpoonacularClient
 from validate_ingredients import validate_ingredients
+from db import add_favourites, get_favourites
 
 def main():
     print("🍳 Recipe Finder\n")
@@ -36,6 +37,11 @@ def main():
                     print(f"   📝 No instructions available")
                 
                 print()  # Empty line between recipes
+            for recipe in recipes:
+                save = input(f"Do you want to save '{recipe['title']}' to favourites? (y/n): ").strip().lower()
+                if save == 'y':
+                    add_favourites(recipe)
+                    print(f"✅ '{recipe['title']}' added to favourites!\n")
             
     except Exception as e:
         print(f"❌ An error occurred: {e}")
