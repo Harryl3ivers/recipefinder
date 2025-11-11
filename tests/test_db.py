@@ -28,6 +28,7 @@ def test_db():
         )
     ''')
     conn.commit()
+    conn.close()
     
     yield test_db_name
     
@@ -36,6 +37,7 @@ def test_db():
         os.remove(test_db_name)
 
 def test_add_favourites(test_db):
+    
   
     
     sample_recipe = {

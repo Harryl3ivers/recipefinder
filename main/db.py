@@ -22,8 +22,8 @@ def init_db():
 
 
 
-def add_favourites(recipe):
-    conn = sqlite3.connect('recipes.db')
+def add_favourites(recipe,db_path='recipes.db'):
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute('''
         INSERT OR REPLACE INTO recipes
@@ -42,8 +42,8 @@ def add_favourites(recipe):
     conn.commit()
     conn.close()
 
-def get_favourites():
-    conn = sqlite3.connect('recipes.db')
+def get_favourites(db_path='recipes.db'):
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM recipes') 
     # Tell SQLite to select all rows from the recipes table.
