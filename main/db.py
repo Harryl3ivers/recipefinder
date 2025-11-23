@@ -27,13 +27,15 @@ def add_favourites(recipe,db_path='recipes.db'):
     cursor = conn.cursor()
     cursor.execute('''
         INSERT OR REPLACE INTO recipes
-        (id, title, ingredients, instructions, readyInMinutes, sourceUrl, image, mealType)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (id, title, ingredients, instructions, time, cuisine, readyInMinutes, sourceUrl, image, mealType)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         recipe['id'],
         recipe['title'],
         json.dumps(recipe['ingredients']),
         json.dumps(recipe['instructions']),
+        recipe.get('time'),
+        json.dumps(recipe.get('cuisine')),
         recipe.get('readyInMinutes'),
         recipe.get('sourceUrl'),
         recipe.get('image'),
@@ -45,24 +47,27 @@ def add_favourites(recipe,db_path='recipes.db'):
 def get_favourites(db_path='recipes.db'):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM recipes') 
-    # Tell SQLite to select all rows from the recipes table.
-    rows = cursor.fetchall()
-    # Fetch all those rows into Python as a list of tuples (raw data).
-    conn.close()
-    favourites = []
-    for row in rows:
-        favourites.append({
-            'id': row[0],
-            'title': row[1],
-            'ingredients': json.loads(row[2]),
-            'readyInMinutes': row[3],
-            'instructions': json.loads(row[4]),
-            'time': row[5],
-            'cuisine': row[6],
-            'image': row[7],
-            'sourceUrl': row[8],
-            'mealType': row[9]
-        })
-    return favourites
+    try:
+        cursor.execute("SELECT * FROM recipes")
+        rows = cursor.fetchall()
+        favourites = []
+        for row in rows:
+            favourites.append({
+                'id': row[0],
+                'title': row[1],
+                'ingredients': json.loads(row[2]) if row[2] else [],
+                'readyInMinutes': row[3],
+                'instructions': json.loads(row[4]) if row[4] else [],
+                'time': row[5],
+                'cuisine': json.loads(row[6]) if row[6] else [],
+                'image': row[7],
+                'sourceUrl': row[8],
+                'mealType': row[9]
+            })
+        return favourites
+    finally:
+        conn.close()  
+
+
+     
 
